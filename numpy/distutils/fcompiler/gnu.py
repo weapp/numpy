@@ -70,7 +70,7 @@ class GnuFCompiler(FCompiler):
 
         # If still nothing, raise an error to make the problem easy to find.
         err = 'A valid Fortran version was not found in this string:\n'
-        raise ValueError(err + version_string)
+        raise ValueError(err + repr(version_string))
 
     def version_match(self, version_string):
         v = self.gnu_version_match(version_string)
