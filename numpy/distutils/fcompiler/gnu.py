@@ -31,23 +31,23 @@ class GnuFCompiler(FCompiler):
     def gnu_version_match(self, version_string):
         """Handle the different versions of GNU fortran compilers"""
 
-        version_string = version_string.strip()
+        vs = version_string.strip()
 
         # Strip warning(s) that may be emitted by gfortran
-        while version_string.startswith('gfortran: warning'):
-            version_string = version_string[version_string.find('\n') + 1:]
+        while vs.startswith('gfortran: warning'):
+            vs = vs[vs.find('\n') + 1:]
 
         # Gfortran versions from after 2010 will output a simple string
         # (usually "x.y", "x.y.z" or "x.y.z-q") for ``-dumpversion``; older
         # gfortrans may still return long version strings (``-dumpversion`` was
         # an alias for ``--version``)
-        if len(version_string) <= 20:
+        if len(vs) <= 20:
             # Try to find a valid version string
-            m = re.search(r'([0-9.]+)', version_string)
+            m = re.search(r'([0-9.]+)', vs)
             if m:
                 # g77 provides a longer version string that starts with GNU
                 # Fortran
-                if version_string.startswith('GNU Fortran'):
+                if vs.startswith('GNU Fortran'):
                     return ('g77', m.group(1))
 
                 # gfortran only outputs a version string such as #.#.#, so check
@@ -56,11 +56,11 @@ class GnuFCompiler(FCompiler):
                     return ('gfortran', m.group(1))
         else:
             # Output probably from --version, try harder:
-            m = re.search(r'GNU Fortran\s+95.*?([0-9-.]+)', version_string)
+            m = re.search(r'GNU Fortran\s+95.*?([0-9-.]+)', vs)
             if m:
                 return ('gfortran', m.group(1))
             m = re.search(
-                r'GNU Fortran.*?\-?([0-9-.]+\.[0-9-.]+)', version_string)
+                r'GNU Fortran.*?\-?([0-9-.]+\.[0-9-.]+)', vs)
             if m:
                 v = m.group(1)
                 if v.startswith('0') or v.startswith('2') or v.startswith('3'):
@@ -73,7 +73,7 @@ class GnuFCompiler(FCompiler):
 
         # If still nothing, raise an error to make the problem easy to find.
         err = 'A valid Fortran version was not found in this string:\n'
-        raise ValueError(err + repr(version_string))
+        raise ValueError(err + repr(vs))
 
     def version_match(self, version_string):
         v = self.gnu_version_match(version_string)
