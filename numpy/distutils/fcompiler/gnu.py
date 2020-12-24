@@ -35,7 +35,7 @@ class GnuFCompiler(FCompiler):
 
         # Strip warning(s) that may be emitted by gfortran
         while vs.startswith('gfortran: warning'):
-            vs = vs[vs.find('\n') + 1:]
+            vs = vs[vs.find('\n') + 1:].strip()
 
         # Gfortran versions from after 2010 will output a simple string
         # (usually "x.y", "x.y.z" or "x.y.z-q") for ``-dumpversion``; older
